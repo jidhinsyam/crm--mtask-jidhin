@@ -1,0 +1,74 @@
+//create table department
+
+
+ CREATE TABLE departments (
+    department_id INT PRIMARY KEY,
+    department_name VARCHAR(100)
+);
+//insert the value
+INSERT INTO departments (department_id, department_name) VALUES 
+(1, 'Human Resources'),
+(2, 'Engineering'),
+(3, 'Sales'),
+(4, 'Marketing'); 
+
+
+//create table employee
+
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department_id INT,
+    hire_date DATE
+);
+//insert teh value into employee table
+
+INSERT INTO employees (employee_id,first_name, last_name,department_id,hire_date) VALUES 
+(101, 'Jidhin ', 'k', 1, '2023-06-15'),
+(102, 'Jid', 'c', 2, '2022-03-22'),
+(103, 'syam', 'b', 3, '2021-10-30'),
+(104, 'jis', 'J', 2, '2024-02-01');
+
+//create table salaries
+
+CREATE TABLE salaries (
+    employee_id INT,
+    salary DECIMAL(10, 2),
+    from_date DATE,
+    to_date DATE,
+    PRIMARY KEY (employee_id, from_date),
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+);
+
+//values insert into values table
+
+INSERT INTO salaries (employee_id, salary, from_date, to_date) VALUES 
+(101, 60000.00, '2023-06-15', '2024-06-14'),
+(102, 80000.00, '2022-03-22', '2023-03-21'),
+(103, 75000.00, '2021-10-30', '2022-10-29'),
+(104, 90000.00, '2024-02-01', '2025-02-01');
+ 
+SQL Queries
+1.Find all employees who have been hired in the last year
+
+SELECT employee_id, first_name, last_name, hire_date
+FROM employees
+WHERE hire_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR);
+
+2.Calculate the total salary expenditure for each department
+
+SELECT d.department_name, SUM(s.salary) AS total_salary_expenditure
+FROM departments d
+JOIN employees e ON d.department_id = e.department_id
+JOIN salaries s ON e.employee_id = s.employee_id
+GROUP BY d.department_name;
+
+3.Find the top 5 highest-paid employees along with their department names
+
+SELECT e.first_name, e.last_name, d.department_name, s.salary
+FROM employees e
+JOIN salaries s ON e.employee_id = s.employee_id
+JOIN departments d ON e.department_id = d.department_id
+ORDER BY s.salary DESC
+LIMIT 5;
